@@ -1,0 +1,8 @@
+[Unit]
+Description=Daemon for pi_attack script
+After=multi-user.target
+[Service]
+Type=idle
+ExecStart=python3 {}
+[Install]
+WantedBy=multi-user.target
