@@ -1,3 +1,4 @@
+import shutil
 import netifaces 
 import configparser
 import os
@@ -13,29 +14,48 @@ def parse_config():
  if os.path.exists("config.ini"):
   print_good("Using wifi interface from config.ini file")
   config.read('config.ini')
-  interface=config["net_interface"]["Net_interface"]
-  startup=config["startup"]["Run on startup"]
+  interface=config["net_interface"]["net_interface"]
+  startup=config["startup"]["run on startup"]
+  self_dis=config['system_distraction']["add system-destroyer script if something goes wrong"]
+  check_script(self_dis)
   check_daemon(startup) 
   enable_monitor_mode(interface)
+  exit()
  else:
   print_info("Config.ini wasn't found.Creating config...")
   interface=input("\nInterfaces:{}\nPlease enter your wifi interface:".format(netifaces.interfaces()))
   if interface in netifaces.interfaces():
-   print_good("Setting {} as wifi interface".format(interface))	
-   auto_load=input("Do you want to start this script on startup?(Y/n):")
-   if auto_load.lower != "y" and auto_load.lower !='n':
-    print_error("Invalid choice.Setting script on startup as default")
-    auto_load='Y'
-   print_info("Writing settings to config file")
-   write_config(config,interface,auto_load.upper())
-   check_daemon(auto_load.upper())
-   print_info("Please restart script to apply changes from config file")
-   exit()
+    print_good("Setting {} as wifi interface".format(interface)) 
+    auto_load=input("Do you want to start this script on startup?(Y/n):")
+    selfdis=input("Do you want to add script which destroys system(if something goes wrong)(y/N):")
+    if auto_load.lower()!= "y" and auto_load.lower()!="n":
+     print_error("Invalid choice.Setting script on startup as default")
+     auto_load='Y'
+    if selfdis.lower()!="y" and selfdis.lower()!="n":
+     print_error("Invalid choice. Setting system-distroyer script off by default")
+     selfdis='N'
+    print_info("Writing settings to config file")
+    write_config(config,interface,auto_load.upper(),selfdis.upper())
+    check_daemon(auto_load.upper())
+    print_info("Please restart script to apply changes from config file")
+    exit() 
   else:
-   print_error("Invalid interface");exit() 
-def write_config(config,interface,auto_load): 
+   print_error("Invalid interface")
+   exit() 
+def check_script(self_dis):
+ if self_dis.lower() == 'y':
+  if os.path.exists("/bin/destroyer"):
+   print_good("System-destroyer script is ready to use")
+  else:
+   print_info("System-destroyer script wasn't found.Creating script...")
+   shutil.copy2("destroyer","/bin/destroyer"); system("chmod +x /bin/destroyer") 
+   print_good("System-destroyer script was created and ready to use(/bin/destroyer)(just type destroyer)")
+ else:
+  pass
+def write_config(config,interface,auto_load,selfdis): 
  config["net_interface"]={'Net_interface':interface}
  config["startup"]={'Run on startup':auto_load}
+ config["system_distraction"]={'Add system-destroyer script if something goes wrong':selfdis}
  with open("config.ini",'w') as config_file:
   config.write(config_file)
  print_good("Config was created")
@@ -80,4 +100,3 @@ def enable_monitor_mode(interface):
   print_error("Interface from config file wasn't found")    
   exit()
 main()
-
