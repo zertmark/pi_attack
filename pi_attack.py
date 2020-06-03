@@ -31,7 +31,7 @@ def parse_config():
   check_script(self_dis)
   check_daemon(startup) 
   scan_network(interface)
-  #enable_monitor_mode(interface)
+  enable_monitor_mode(interface)
  else:
   print_info("Config.ini wasn't found.Creating config...")
   interface=input("\nInterfaces:{}\nPlease enter your wifi interface:".format(netifaces.interfaces()))
@@ -144,8 +144,7 @@ def scan_network(interface):
    print_error("Directory nmap isn't found")
    exit()
  else:
-  print_error("Internet connection isn't establish")
-  exit() 
+  print_error("Internet connection isn't establish") 
 #def mask(interface):
 # import socket
 # s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
