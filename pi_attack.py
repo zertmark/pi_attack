@@ -1,5 +1,5 @@
 #!/bin/python3 
-from pyroute2 import IPRoute
+#from pyroute2 import IPRoute
 import urllib
 from scapy import *
 from scapy.all import *
@@ -13,6 +13,16 @@ import configparser
 import threading
 import os
 from os import system
+banner="""
+                  ▄▄  ▄▄▄▄▄▄▄▄                                ▄▄        ▄▄
+       ██        ██   ▀▀▀▀▀███                        ██       █▄        █▄
+      ██        ██        ██▀    ▄████▄    ██▄████  ███████     █▄        █▄
+     ██        ██       ▄██▀    ██▄▄▄▄██   ██▀        ██         █▄        █▄
+    ▄█▀       ▄█▀      ▄██      ██▀▀▀▀▀▀   ██         ██          █▄        █
+   ▄█▀       ▄█▀      ███▄▄▄▄▄  ▀██▄▄▄▄█   ██         ██▄▄▄        █▄        █▄
+  ▄█▀       ▄█▀       ▀▀▀▀▀▀▀▀    ▀▀▀▀▀    ▀▀          ▀▀▀▀         █▄        █▄
+                                PI_attack
+"""
 def print_error(text):
  print("[-] {}".format(text))
 def print_info(text):
@@ -31,7 +41,7 @@ def parse_config():
   check_script(self_dis)
   check_daemon(startup) 
   scan_network(interface)
-  enable_monitor_mode(interface)
+  #enable_monitor_mode(interface)
  else:
   print_info("Config.ini wasn't found.Creating config...")
   interface=input("\nInterfaces:{}\nPlease enter your wifi interface:".format(netifaces.interfaces()))
@@ -76,6 +86,7 @@ def write_config(config,interface,auto_load,selfdis,scan):
   config.write(config_file)
  print_good("Config was created")
 def main():
+ print(banner)
  print_info("Starting...")
  parse_config()
 def check_daemon(load_on_startup):
@@ -144,7 +155,8 @@ def scan_network(interface):
    print_error("Directory nmap isn't found")
    exit()
  else:
-  print_error("Internet connection isn't establish") 
+  print_error("Internet connection isn't establish")
+  exit() 
 #def mask(interface):
 # import socket
 # s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
