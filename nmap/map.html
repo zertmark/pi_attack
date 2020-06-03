@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="Nmap Scan" >
+  <title>Nmap scan</title>
+  <script src="go.js"></script>
+  <script id="code">
+var head = document.getElementsByTagName("head")[0];
+
+function goCode(pre, w, h, diagramclass, parentid) {
+  if (diagramclass === undefined) diagramclass = go.Diagram;
+  if (typeof pre === "string") pre = document.getElementById(pre);
+  var div = document.createElement("div");
+  div.style.width = w + "%";
+  div.style.height = h + "px";
+  div.className = "diagramStyling";
+  var parent;
+  if (parentid === undefined) {
+    parent = pre.parentNode;
+  } else {
+    parent = document.getElementById(parentid);
+  }
+  parent.appendChild(div);
+  var f = eval("(function (diagram, $) {" + pre.textContent + "})");
+  f(new diagramclass(div), go.GraphObject.make);
+}
+
+function goIntro() {
+  _traverseDOM(document);
+}
+
+function _traverseDOM(node) {
+  if (node.nodeType === 1 && node.nodeName === "A" && !node.getAttribute("href")) {
+    var text = node.innerHTML.split(".");
+    if (text.length === 1) {
+      node.setAttribute("href", "../api/symbols/" + text[0] + ".html");
+      node.setAttribute("target", "api");
+    } else if (text.length === 2) {
+      node.setAttribute("href", "../api/symbols/" + text[0] + ".html" + "#" + text[1]);
+      node.setAttribute("target", "api");
+    } else {
+      alert("Unknown API reference: " + node.innerHTML);
+    }
+  }
+  for (var i = 0; i < node.childNodes.length; i++) {
+    _traverseDOM(node.childNodes[i]);
+  }
+}
+
+  </script>
+</head>
+<body onload="goIntro()">
+<div id="content">
+
+
+<h2 id="ChangingCategoryOfPart">Network map</h2>
+<script data-language="javascript" id="changingCategory">
+  function changeCategory(obj, category) {
+    var node = obj.part;
+    if (node) {
+      var diagram = node.diagram;
+      diagram.startTransaction("changeCategory");
+      diagram.model.setCategoryForNodeData(node.data, category);
+      diagram.commitTransaction("changeCategory");
+    }
+  }
+
+  var name=
+    $(go.Node, "Spot",
+      $(go.Panel, "Auto",
+        $(go.Shape, "RoundedRectangle",
+          new go.Binding("fill", "color")),
+        $(go.TextBlock, { row: 0, column: 0, columnSpan: 2, font: "bold 10pt sans-serif" },
+          new go.Binding("text", "key"))
+      ),
+      $("Button",
+        { alignment: go.Spot.TopRight },
+        $(go.Shape, "ThinCross", { width: 3, height: 3 }),
+          { click: function(e, obj) { changeCategory(obj,'basics');} }),
+      $("Button",
+        { alignment: go.Spot.TopLeft },
+        $(go.Shape, "ThinCross", { width: 3, height: 3 }),
+          { click: function(e, obj) { changeCategory(obj,'ports');} }),
+      $("Button",
+        { alignment: go.Spot.BottomRight },
+        $(go.Shape, "ThinCross", { width: 3, height: 3 }),
+          { click: function(e, obj) { changeCategory(obj,'details');} })
+    );
+
+  var basics =
+    $(go.Node, "Spot",
+      $(go.Panel, "Auto",
+        $(go.Shape, "RoundedRectangle",
+          new go.Binding("fill", "color")),
+        $(go.Panel, "Table",
+          { defaultAlignment: go.Spot.Left },
+          $(go.TextBlock, { row: 0, column: 0, columnSpan: 2, font: "bold 10pt sans-serif" },
+            new go.Binding("text", "key")),
+          $(go.TextBlock, { row: 1, column: 0, font: "bold 10pt sans-serif" }, "Basics:"),
+          $(go.TextBlock, { row: 1, column: 1 }, new go.Binding("text", "basics"))
+        )
+      ),
+      $("Button",
+        { alignment: go.Spot.TopRight },
+        $(go.Shape, "CircleLine", { width: 4, height: 4 }),
+          { click: function(e, obj) { changeCategory(obj,'name');} }),
+     $("Button",
+        { alignment: go.Spot.TopLeft },
+        $(go.Shape, "ThinCross", { width: 4, height: 4 }),
+          { click: function(e, obj) { changeCategory(obj,'ports');} }),
+     $("Button",
+        { alignment: go.Spot.BottomRight },
+        $(go.Shape, "ThinCross", { width: 4, height: 4 }),
+          { click: function(e, obj) { changeCategory(obj,'details');} })
+    );
+
+  var ports =
+    $(go.Node, "Spot",
+      $(go.Panel, "Auto",
+        $(go.Shape, "RoundedRectangle",
+          new go.Binding("fill", "color")),
+        $(go.Panel, "Table",
+          { defaultAlignment: go.Spot.Left },
+          $(go.TextBlock, { row: 0, column: 0, columnSpan: 2, font: "bold 10pt sans-serif" },
+            new go.Binding("text", "key")),
+          $(go.TextBlock, { row: 1, column: 0, font: "bold 10pt sans-serif" }, "ports:"),
+          $(go.TextBlock, { row: 1, column: 1,font: "10pt monospace" }, new go.Binding("text", "ports"))
+        )
+      ),
+      $("Button",
+        { alignment: go.Spot.TopRight },
+        $(go.Shape, "ThinCross", { width: 4, height: 4 }),
+          { click: function(e, obj) { changeCategory(obj,'basics');} }),
+     $("Button",
+        { alignment: go.Spot.TopLeft },
+        $(go.Shape, "CircleLine", { width: 4, height: 4 }),
+          { click: function(e, obj) { changeCategory(obj,'name');} }),
+     $("Button",
+        { alignment: go.Spot.BottomRight },
+        $(go.Shape, "ThinCross", { width: 4, height: 4 }),
+          { click: function(e, obj) { changeCategory(obj,'details');} })
+    );
+
+var details =
+    $(go.Node, "Spot",
+      $(go.Panel, "Auto",
+        $(go.Shape, "RoundedRectangle",
+          new go.Binding("fill", "color")),
+        $(go.Panel, "Table",
+          { defaultAlignment: go.Spot.Left },
+          $(go.TextBlock, { row: 0, column: 0, columnSpan: 2, font: "bold 10pt sans-serif" },
+            new go.Binding("text", "key")),
+          $(go.TextBlock, { row: 1, column: 0, font: "bold 10pt sans-serif" }, "Details:"),
+          $(go.TextBlock, { row: 1, column: 1 }, new go.Binding("text", "details"))
+        )
+      ),
+      $("Button",
+        { alignment: go.Spot.TopRight },
+        $(go.Shape, "ThinCross", { width: 4, height: 4 }),
+          { click: function(e, obj) { changeCategory(obj,'basics');} }),
+     $("Button",
+        { alignment: go.Spot.TopLeft },
+        $(go.Shape, "ThinCross", { width: 4, height: 4 }),
+          { click: function(e, obj) { changeCategory(obj,'ports');} }),
+     $("Button",
+        { alignment: go.Spot.BottomRight },
+        $(go.Shape, "CircleLine", { width: 4, height: 4 }),
+          { click: function(e, obj) { changeCategory(obj,'name');} })
+    );
+
+  var templmap = new go.Map("string", go.Node);
+  templmap.add("name", name);
+  templmap.add("basics", basics);
+  templmap.add("ports", ports);
+  templmap.add("details", details);
+  diagram.nodeTemplateMap = templmap;
+
+  diagram.layout = $(go.ForceDirectedLayout,{ maxIterations: 200, defaultSpringLength: 20, defaultElectricalCharge: 80 });
+
+diagram.model.nodeDataArray = [{ key:  "192.168.1.1", basics: "Subnet: 192.168.1.52/24\nGateway: 192.168.1.1\nDevice type: router\nRunning: Linux 3.X\nMAC: E8:37:7A:9A:90:BA\nMAC Vendor: Zyxel Communications\nOS type: Linux", details: "First Scanned: 2020-06-02 19:39:09\nLast Scanned: 2020-06-03 17:56:10\nTimes Scanned: 7/7\nStatus: up\nLatency: 0.0028s latency\nHops: 1\nOC CPE: /o:linux/x_kernel:3\nOS Details: Linux 3.2 - 3.8.",ports: "997 closed ports\n23/tcp    open     telnet         Pirelli VDSL router or ZyXEL Keenetic Omni telnetd.\n53/tcp    open     domain         Unbound 1.5.8.\n80/tcp    open     http           Web server.", color: "chocolate", category: "name" },{ key:  "192.168.1.35", basics: "Subnet: 192.168.1.52/24\nGateway: 192.168.1.1\nDevice type: unknown\nMAC: 3C:20:F6:B5:2D:81\nMAC Vendor: Samsung Electronics\nOS type: unknown", details: "First Scanned: 2020-06-02 20:05:40\nLast Scanned: 2020-06-02 22:22:21\nTimes Scanned: 2/3\nStatus: down\nLatency: 0.0074s latency\nHops: 1\nWarnings: Too many fingerprints match this host to give specific OS\ndetails.",ports: "All 1000 scanned ports are filtered (828) or closed (172)", color: "gold", category: "name" },{ key:  "192.168.1.37", basics: "Subnet: 192.168.1.52/24\nGateway: 192.168.1.1\nDevice type: unknown\nRunning: Linux \nMAC: B4:2E:99:B2:8E:F2\nMAC Vendor: Giga-byte Technology\nOS type: Linux", details: "First Scanned: 2020-06-02 19:39:09\nLast Scanned: 2020-06-03 17:56:10\nTimes Scanned: 7/7\nStatus: up\nLatency: 0.0046s latency\nHops: 1\nOC CPE: /o:linux/x_kernel \nWarnings: No exact OS matches for host (If you know what OS is running\non it, see https://nmap.org/submit/ )..",ports: "998 closed ports\n22/tcp    open     ssh            OpenSSH 8.2p1 Debian 4 (protocol 2.0).\n111/tcp   open     rpcbind        2-4 (RPC #100000).", color: "lightsalmon", category: "name" },{ key:  "192.168.1.43", basics: "Subnet: 192.168.1.52/24\nGateway: 192.168.1.1\nDevice type: unknown\nMAC: EC:8C:9A:61:47:26\nMAC Vendor: Huawei Technologies\nOS type: unknown", details: "First Scanned: 2020-06-02 19:39:09\nLast Scanned: 2020-06-03 17:56:10\nTimes Scanned: 7/7\nStatus: up\nLatency: 0.20s latency\nHops: 1\nWarnings: Too many fingerprints match this host to give specific OS\ndetails.",ports: "All 1000 scanned ports are closed", color: "gold", category: "name" },{ key:  "192.168.1.46", basics: "Subnet: 192.168.1.52/24\nGateway: 192.168.1.1\nDevice type: general purpose\nRunning: (JUST GUESSING): Microsoft Windows 2008|XP|7 (86%)\nMAC: 74:DE:2B:42:F9:19\nMAC Vendor: Liteon Technology\nOS type: Windows", details: "First Scanned: 2020-06-03 17:56:10\nLast Scanned: 2020-06-03 17:56:10\nTimes Scanned: first time\nStatus: up\nLatency: 0.013s latency\nHops: 1\nOC CPE: /o:microsoft:windows_server_2008::sp1 /r2\n/o:microsoft:windows_xp::sp2 /o:microsoft:windows_7\nWarnings: OSScan results may be unreliable because we could not find at\nleast 1 open and 1 closed port.\nMicrosoft Windows Server 2008\nSP1 or Windows Server 2008 R2 (86%), Microsoft Windows XP SP2\n(85%), Microsoft Windows 7 (85%)\nNo exact OS matches for host\n(test conditions non-ideal)..",ports: "996 filtered ports\n135/tcp   open     msrpc          Microsoft Windows RPC.\n139/tcp   open     netbios-ssn    Microsoft Windows netbios-ssn.\n445/tcp   open     microsoft-ds?.\n5357/tcp  open     http           Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP).", color: "dodgerblue", category: "name" },{ key:  "192.168.1.52", basics: "Subnet: 192.168.1.52/24\nGateway: 192.168.1.1\nDevice type: general purpose\nRunning: Linux 3.X\nMAC: b8:27:eb:63:a9:f3\nOS type: Linux", details: "First Scanned: 2020-06-02 19:39:09\nLast Scanned: 2020-06-03 17:56:10\nTimes Scanned: 7/7\nStatus: up\nLatency: 0.00012s latency\nOC CPE: /o:linux/x_kernel:3\nOS Details: Linux 3.7 - 3.10.",ports: "999 closed ports\n22/tcp    open     ssh            OpenSSH 7.9p1 Debian 10 (protocol 2.0).", color: "lightsalmon", category: "name" }];
+diagram.model.linkDataArray = [{ from: "192.168.1.46", to: "192.168.1.1" }];
+</script>
+<script>goCode("changingCategory", 100, 600)</script>
+
+
+</div>
+<div>
+<table id="hosts" style="width:100%">
+ <thead>
+  <tr>
+    <th>Status</th>
+    <th>First Scanned</th>
+    <th>Last Scanned</th>
+    <th>Times<br>Scanned</th>
+    <th>Network</th>
+    <th>Host name</th>
+    <th>IP Address</th> 
+    <th>MAC Address</th> 
+    <th>MAC Vendor</th> 
+    <th>Netmask</th>
+    <th>Gateway</th>
+    <th>Device type</th>
+    <th>OS type</th>
+    <th>Running</th>
+    <th>Hops</th>
+    <th>OS CP</th>
+    <th>OS Details</th>
+    <th>Ports</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr bgcolor="chocolate">
+    <td>up</td>
+    <td>2020-06-02 19:39:09</td>
+    <td>2020-06-03 17:56:10</td>
+    <td>7/7</td>
+    <td>192.168.1.52/24</td>
+    <td></td>
+    <td>192.168.1.1</td>
+    <td>E8:37:7A:9A:90:BA</td>
+    <td>Zyxel Communications</td>
+    <td></td>
+    <td>192.168.1.1</td>
+    <td>router</td>
+    <td>Linux</td>
+    <td>Linux 3.X</td>
+    <td>1</td>
+    <td>/o:linux/x_kernel:3</td>
+    <td>Linux 3.2 - 3.8.</td>
+    <td>23/tcp 53/tcp 80/tcp </td>
+  </tr>
+  <tr bgcolor="gold">
+    <td>down</td>
+    <td>2020-06-02 20:05:40</td>
+    <td>2020-06-02 22:22:21</td>
+    <td>2/3</td>
+    <td>192.168.1.52/24</td>
+    <td></td>
+    <td>192.168.1.35</td>
+    <td>3C:20:F6:B5:2D:81</td>
+    <td>Samsung Electronics</td>
+    <td></td>
+    <td>192.168.1.1</td>
+    <td>unknown</td>
+    <td>unknown</td>
+    <td></td>
+    <td>1</td>
+    <td></td>
+    <td></td>
+    <td>All 1000 scanned ports are filtered (828) or closed (172)</td>
+  </tr>
+  <tr bgcolor="lightsalmon">
+    <td>up</td>
+    <td>2020-06-02 19:39:09</td>
+    <td>2020-06-03 17:56:10</td>
+    <td>7/7</td>
+    <td>192.168.1.52/24</td>
+    <td></td>
+    <td>192.168.1.37</td>
+    <td>B4:2E:99:B2:8E:F2</td>
+    <td>Giga-byte Technology</td>
+    <td></td>
+    <td>192.168.1.1</td>
+    <td>unknown</td>
+    <td>Linux</td>
+    <td>Linux </td>
+    <td>1</td>
+    <td>/o:linux/x_kernel </td>
+    <td></td>
+    <td>22/tcp 111/tcp </td>
+  </tr>
+  <tr bgcolor="gold">
+    <td>up</td>
+    <td>2020-06-02 19:39:09</td>
+    <td>2020-06-03 17:56:10</td>
+    <td>7/7</td>
+    <td>192.168.1.52/24</td>
+    <td></td>
+    <td>192.168.1.43</td>
+    <td>EC:8C:9A:61:47:26</td>
+    <td>Huawei Technologies</td>
+    <td></td>
+    <td>192.168.1.1</td>
+    <td>unknown</td>
+    <td>unknown</td>
+    <td></td>
+    <td>1</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr bgcolor="dodgerblue">
+    <td>up</td>
+    <td>2020-06-03 17:56:10</td>
+    <td>2020-06-03 17:56:10</td>
+    <td>1</td>
+    <td>192.168.1.52/24</td>
+    <td></td>
+    <td>192.168.1.46</td>
+    <td>74:DE:2B:42:F9:19</td>
+    <td>Liteon Technology</td>
+    <td></td>
+    <td>192.168.1.1</td>
+    <td>general purpose</td>
+    <td>Windows</td>
+    <td>(JUST GUESSING): Microsoft Windows 2008|XP|7 (86%)</td>
+    <td>1</td>
+    <td>/o:microsoft:windows_server_2008::sp1 /r2\n/o:microsoft:windows_xp::sp2 /o:microsoft:windows_7</td>
+    <td></td>
+    <td>135/tcp 139/tcp 445/tcp 5357/tcp </td>
+  </tr>
+  <tr bgcolor="lightsalmon">
+    <td>up</td>
+    <td>2020-06-02 19:39:09</td>
+    <td>2020-06-03 17:56:10</td>
+    <td>7/7</td>
+    <td>192.168.1.52/24</td>
+    <td></td>
+    <td>192.168.1.52</td>
+    <td>b8:27:eb:63:a9:f3</td>
+    <td></td>
+    <td></td>
+    <td>192.168.1.1</td>
+    <td>general purpose</td>
+    <td>Linux</td>
+    <td>Linux 3.X</td>
+    <td>0</td>
+    <td>/o:linux/x_kernel:3</td>
+    <td>Linux 3.7 - 3.10.</td>
+    <td>22/tcp </td>
+  </tr>
+
+  </tbody>
+</table>
+
+<script src="tablefilter/tablefilter.js"></script>
+<script data-config>
+var tfConfig = {
+    rows_counter_text: 'Number of hosts: ',
+    btn_reset_text: "Clear",
+    loader: true,
+    no_results_message: true,
+    base_path: './tablefilter/',
+    col_0: 'select',
+    col_4: 'select',
+    col_8: 'select',
+    col_9: 'select',
+    col_10: 'select',
+    col_11: 'select',
+    col_12: 'select',
+    col_14:'select',
+    mark_active_columns: true,
+    rows_counter: true,
+    btn_reset: true,
+    status_bar: true,
+    col_widths: ["","100px","100px","","120px","120px","120px","180px","120px","120px","150px","150px","100px","10%","30px","10%","10%","10%"],
+    col_types: [
+       'string',
+       'string',
+       'string',
+       'number',
+       'string',
+       'string',
+       'ipaddress',
+       'string',
+       'string',
+       'ipaddress',
+       'ipaddress',
+       'string',
+       'string',
+       'string',
+       'number',
+       'string',
+       'string',
+       'string'
+       ],
+    extensions: [{ name: 'sort' },
+                 { name: 'colsVisibility',
+                      at_start: [1,2,4,9,14,15,16,17],
+                      text: 'Hide columns: ',
+                      enable_tick_all: true}]
+};
+var tf = new TableFilter('hosts', tfConfig);
+tf.init();
+</script>
+
+</div>
+</body>
+</html>
+
+
