@@ -1,6 +1,7 @@
 #!/bin/python3 
 #from pyroute2 import IPRoute
 import urllib
+from urllib import request
 from scapy import *
 from scapy.all import *
 import shutil
@@ -147,7 +148,7 @@ def enable_monitor_mode(interface):
 # else:
 #  pass
 def scan_network(interface):
- if check_internet_connection != False:
+ if check_internet_connection() != False:
   if os.path.exists("nmap/"):
    print_info("Starting to scan network")
    system('cd nmap/ && ./nmapscan.pl')
@@ -170,7 +171,7 @@ def scan_network(interface):
 # ip.close()
 def check_internet_connection():
  try:
-  urllib.open("http://google.com")
+  urllib.request.urlopen("http://google.com")
   return True
  except IOError:
   return False
